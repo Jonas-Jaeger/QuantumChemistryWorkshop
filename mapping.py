@@ -71,14 +71,18 @@ class JordanWigner(Mapping):
 
         creation_operators = list()
         annihilation_operators = list()
-        
-        ################################################################################################################
-        # YOUR CODE HERE
-        # TO COMPLETE (after lecture on mapping)
-        # This is a large piece of the puzzle
-        ################################################################################################################
 
-        raise NotImplementedError()
+        eye = np.eye(n_qubits, dtype=bool)
+        zeros = np.zeros(n_qubits, dtype=bool)
+
+        for i in range(n_qubits):  # iterate over states
+            c_i = 0.5 * PauliString.from_zx_bits(np.concatenate((zeros, eye[i]))) + (-0.5j) * PauliString.from_zx_bits(np.concatenate((eye[i], eye[i])))
+            a_i = 0.5*PauliString.from_zx_bits(np.concatenate((zeros, eye[i]))) + 0.5j*PauliString.from_zx_bits(np.concatenate((eye[i], eye[i])))
+            for j in range(i):
+                a_i *= (1*PauliString.from_zx_bits(np.concatenate((eye[j], zeros))))
+                c_i *= (1*PauliString.from_zx_bits(np.concatenate((eye[j], zeros))))
+            annihilation_operators.append(a_i)
+            creation_operators.append(c_i)
 
         return creation_operators, annihilation_operators
 

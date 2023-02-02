@@ -169,15 +169,17 @@ class OneBodyFermionicHamiltonian(FermionicHamiltonian):
         new_coefs = np.zeros(((2*n_orbs)**2,), dtype=np.complex128)
         new_pauli_strings = np.zeros(((2*n_orbs)**2,), dtype=PauliString)
 
-        lcps = None
+        for i in range(n_orbs):
+            for j in range(n_orbs):
+                ap_am = (creation_operators[i] * annihilation_operators[j])
+                h_ij = self.integrals[i, j]
+                new_coefs[i*4*n_orbs + 4*j:i*4*n_orbs + 4*j+4] = h_ij * ap_am.coefs
+                new_pauli_strings [i*4*n_orbs + 4*j:i*4*n_orbs + 4*j+4] = ap_am.pauli_strings
 
-        ################################################################################################################
-        # YOUR CODE HERE
-        # TO COMPLETE (after lecture on mapping)
-        # lcps =
-        ################################################################################################################
+        new_coefs = np.array(new_coefs, dtype=np.complex128)
+        new_pauli_strings = np.array(new_pauli_strings, dtype=PauliString)
 
-        raise NotImplementedError()
+        lcps = LinearCombinaisonPauliString(new_coefs, new_pauli_strings)
 
         return lcps
 
@@ -250,18 +252,23 @@ class TwoBodyFermionicHamiltonian(FermionicHamiltonian):
         n_orbs = self.number_of_orbitals()
         # Since each creation/annihilation operator consist of 2 PauliString for each orbital
         # and we compute ap * ap * am * am there will be (2*n_orbs)**4 Coefs and PauliStrings
-        new_coefs = np.zeros(((2*n_orbs)**4,), dtype=np.complex128)
-        new_pauli_strings = np.zeros(((2*n_orbs)**4,), dtype=PauliString)
+        new_coefs = list()
+        new_pauli_strings = list()
 
-        lcps = None
+        for i in range(n_orbs):
+            for j in range(n_orbs):
+                for k in range(n_orbs):
+                    for l in range(n_orbs):
+                        ap_am = (creation_operators[i] * creation_operators[j] *
+                                 annihilation_operators[k] * annihilation_operators[l])
+                        h_ijkl = self.integrals[i, j, k, l]
+                        new_coefs.extend(0.5 * h_ijkl * ap_am.coefs)
+                        new_pauli_strings.extend(ap_am.pauli_strings)
 
-        ################################################################################################################
-        # YOUR CODE HERE
-        # TO COMPLETE (after lecture on mapping)
-        # lcps =
-        ################################################################################################################
+        new_coefs = np.array(new_coefs, dtype=np.complex128)
+        new_pauli_strings = np.array(new_pauli_strings, dtype=PauliString)
 
-        raise NotImplementedError()
+        lcps = LinearCombinaisonPauliString(new_coefs, new_pauli_strings)
 
         return lcps
         
@@ -445,14 +452,10 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
             LinearCombinaisonPauliString: Qubit operator reprensentation of the MolecularFermionicHamiltonian.
         """     
 
-        out = None
+        lcps_one = self.one_body.to_linear_combinaison_pauli_string(creation_operators, annihilation_operators).combine()
+        lcps_two = self.two_body.to_linear_combinaison_pauli_string(creation_operators, annihilation_operators).combine()
 
-        ################################################################################################################
-        # YOUR CODE HERE
-        # TO COMPLETE (after lecture on mapping)
-        ################################################################################################################
-
-        raise NotImplementedError()
+        out = (lcps_one + lcps_two).apply_threshold().combine().apply_threshold()
 
         return out
 
