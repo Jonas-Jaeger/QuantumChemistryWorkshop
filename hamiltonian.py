@@ -176,9 +176,6 @@ class OneBodyFermionicHamiltonian(FermionicHamiltonian):
                 new_coefs[i*4*n_orbs + 4*j:i*4*n_orbs + 4*j+4] = h_ij * ap_am.coefs
                 new_pauli_strings [i*4*n_orbs + 4*j:i*4*n_orbs + 4*j+4] = ap_am.pauli_strings
 
-        new_coefs = np.array(new_coefs, dtype=np.complex128)
-        new_pauli_strings = np.array(new_pauli_strings, dtype=PauliString)
-
         lcps = LinearCombinaisonPauliString(new_coefs, new_pauli_strings)
 
         return lcps
