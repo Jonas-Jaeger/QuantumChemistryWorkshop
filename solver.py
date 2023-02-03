@@ -125,14 +125,10 @@ class VQESolver(LCPSSolver):
 
         t0 = time.time()
 
-        opt_value, opt_params = None
 
-        ################################################################################################################
-        # YOUR CODE HERE (OPTIONAL)
-        # TO COMPLETE (after lecture on VQE)
-        ################################################################################################################
+        minimization_result = self.minimizer(self.estimator.eval, self.start_params)
 
-        raise NotImplementedError()
+        opt_value, opt_params = minimization_result.fun, minimization_result.x
 
         self.last_minimization_duration = time.time()-t0
         self.last_opt_params = opt_params  # store the parameters of the variationnal circuit.

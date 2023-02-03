@@ -402,7 +402,7 @@ class LinearCombinaisonPauliString:
             LinearCombinaisonPauliString: New LCPS of len = len(self) + len(other).
         """
 
-        if not isinstance(other, LinearCombinaisonPauliString):
+        if not isinstance(other, type(self)):
             raise ValueError('Can only add with an other LCPS')
 
         if self.n_qubits != other.n_qubits:
@@ -428,7 +428,7 @@ class LinearCombinaisonPauliString:
             LinearCombinaisonPauliString: New LCPS of len = len(self) * len(other).
         """
 
-        if not isinstance(other, LinearCombinaisonPauliString):
+        if not isinstance(other, type(self)):
             raise ValueError()
 
         if self.n_qubits != other.n_qubits:
@@ -584,7 +584,6 @@ class LinearCombinaisonPauliString:
         """
 
         order = np.argsort([''.join(map(str, reversed(bits))) for bits in self.to_zx_bits().astype(int)])
-        print(order)
         new_coefs = self.coefs[order]
         new_pauli_strings = self.pauli_strings[order]
 
