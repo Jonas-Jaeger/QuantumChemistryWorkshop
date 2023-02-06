@@ -315,7 +315,7 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
 
         return cls(one_body, two_body, with_spin)
 
-    @PendingDeprecationWarning
+    #@PendingDeprecationWarning
     @classmethod
     def from_pyscf_mol(cls, mol) -> 'MolecularFermionicHamiltonian':
         """
@@ -329,8 +329,56 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
             TwoBody terms.
         """
 
-        h1_mo = h2_mo = None
+        overlap = mol.intor('int1e_ovlp')
+        d, U = np.linalg.eigh(overlap)
 
+        # Sort eigenvalues in ascending order
+        #idx = d.argsort()
+        #d = d[idx]
+        U = U.T
+        #U = U[:, idx].T
+        T = U.conj().T @ np.diag(1/np.sqrt(d)) @ U
+
+        kin = mol.intor('int1e_kin')
+        vnuc = mol.intor('int1e_nuc')
+        h1_ao = -kin - vnuc
+
+        h1_oo = T.conj().T @ h1_ao @ T
+
+        d_mo, U_mo = np.linalg.eigh(h1_oo)
+        idx = d_mo.argsort()[::-1]
+        d_mo = d_mo[idx]
+        U_mo = U_mo[:, idx].T
+
+        h1_mo = -np.diag(d_mo)
+        print(h1_mo)
+
+        h2_ao = mol.intor('int2e')
+        h2_ao = np.einsum('ijkl->iklj', h2_ao)
+
+        h2_oo = np.zeros(h2_ao.shape)
+        for i in range(h2_ao.shape[0]):
+            for j in range(h2_ao.shape[1]):
+                for k in range(h2_ao.shape[2]):
+                    for l in range(h2_ao.shape[3]):
+                        for m in range(h2_ao.shape[0]):
+                            for n in range(h2_ao.shape[1]):
+                                for o in range(h2_ao.shape[2]):
+                                    for p in range(h2_ao.shape[3]):
+                                        h2_oo[i, j, k, l] += T[n, i].conj() * T[m, j].conj() * h2_ao[m, n, o, p] * T[o, k] * T[p, l]
+
+        h2_mo = np.zeros(h2_ao.shape)
+        for i in range(h2_ao.shape[0]):
+            for j in range(h2_ao.shape[1]):
+                for k in range(h2_ao.shape[2]):
+                    for l in range(h2_ao.shape[3]):
+                        for m in range(h2_ao.shape[0]):
+                            for n in range(h2_ao.shape[1]):
+                                for o in range(h2_ao.shape[2]):
+                                    for p in range(h2_ao.shape[3]):
+                                        h2_mo[i, j, k, l] += U_mo[n, i].conj() * U_mo[m, j].conj() * h2_oo[m, n, o, p] * U_mo[o, k] * U_mo[p, l]
+        print(h2_mo)
+        pass
         ################################################################################################################
         # YOUR CODE HERE
         # TO COMPLETE - OPTIONAL (after lecture second quantization)
@@ -352,12 +400,13 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
         # h2_mo = 
         ################################################################################################################
 
+
         # Build the one and two body Hamiltonians
         one_body = OneBodyFermionicHamiltonian(h1_mo)
         two_body = TwoBodyFermionicHamiltonian(h2_mo)
 
         # Recommended : Make sure that h1_mo is diagonal and that its eigenvalues are sorted in growing order.
-        raise NotImplementedError()
+        #raise NotImplementedError()
 
         return cls(one_body, two_body)
 
