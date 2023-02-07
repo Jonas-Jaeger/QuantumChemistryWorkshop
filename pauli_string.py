@@ -251,17 +251,14 @@ class PauliString:
         Y_MAT = np.array([[0, -1j], [1j, 0]])
         Z_MAT = np.array([[1, 0], [0, -1]])
 
-        matrix = None
+        matrix = np.ones((1,1),dtype = np.complex128)
 
-        ################################################################################################################
-        # YOUR CODE HERE (OPTIONAL)
-        # TO COMPLETE (after lecture on mapping)
-        # Hints : start with
-        # matrix = np.ones((1,1),dtype = np.complex128)
-        # And then use the np.kron() method to build the matrix
-        ################################################################################################################
-
-        raise NotImplementedError()
+        for z_bit, x_bit in zip(self.z_bits, self.x_bits):
+            local_mat = {(0, 0): I_MAT,
+                         (0, 1): X_MAT,
+                         (1, 0): Z_MAT,
+                         (1, 1): Y_MAT}[(z_bit, x_bit)]
+            matrix = np.kron(local_mat, matrix)
         
         return matrix
 
@@ -600,12 +597,8 @@ class LinearCombinaisonPauliString:
         size = 2**self.n_qubits
         matrix = np.zeros((size, size), dtype=np.complex128)
 
-        ################################################################################################################
-        # YOUR CODE HERE (OPTIONAL)
-        # TO COMPLETE (after lecture on mapping)
-        # Hints : sum all the matrices of all PauliStrings weighted by their coef
-        ################################################################################################################
-
-        raise NotImplementedError()
+        for coef, pauli_string in zip(self.coefs, self.pauli_strings):
+            mat = pauli_string.to_matrix()
+            matrix += coef * mat
 
         return matrix
