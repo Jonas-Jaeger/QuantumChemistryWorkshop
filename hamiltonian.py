@@ -331,12 +331,6 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
 
         overlap = mol.intor('int1e_ovlp')
         d, U = np.linalg.eigh(overlap)
-
-        # Sort eigenvalues in ascending order
-        #idx = d.argsort()
-        #d = d[idx]
-        U = U.T
-        #U = U[:, idx].T
         T = U.conj().T @ np.diag(1/np.sqrt(d)) @ U
 
         kin = mol.intor('int1e_kin')
@@ -348,10 +342,9 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
         d_mo, U_mo = np.linalg.eigh(h1_oo)
         idx = d_mo.argsort()[::-1]
         d_mo = d_mo[idx]
-        U_mo = U_mo[:, idx].T
+        U_mo = U_mo[:, idx]
 
         h1_mo = -np.diag(d_mo)
-        print(h1_mo)
 
         h2_ao = mol.intor('int2e')
         h2_ao = np.einsum('ijkl->iklj', h2_ao)
@@ -377,36 +370,11 @@ class MolecularFermionicHamiltonian(FermionicHamiltonian):
                                 for o in range(h2_ao.shape[2]):
                                     for p in range(h2_ao.shape[3]):
                                         h2_mo[i, j, k, l] += U_mo[n, i].conj() * U_mo[m, j].conj() * h2_oo[m, n, o, p] * U_mo[o, k] * U_mo[p, l]
-        print(h2_mo)
-        pass
-        ################################################################################################################
-        # YOUR CODE HERE
-        # TO COMPLETE - OPTIONAL (after lecture second quantization)
-        # Hint : Make sure the 2 body integrals are in the physicist notation (order) or change the spin_tensor.
-        # accordingly.
-        
-        # Diagonalisation of ovlp and build a transformation toward an orthonormal basis (ao2oo).
-        # TO COMPLETE
-
-        # Build h1 in AO basis and transform it into OO basis.
-        # TO COMPLETE
-
-        # Find a transformation from OO basis toward MO basis where h1 is diagonal and eigenvalues are in growing order.
-        # TO COMPLETE
-
-        # Transform h1 and h2 from AO to MO basis
-        # TO COMPLETE
-        # h1_mo = 
-        # h2_mo = 
-        ################################################################################################################
 
 
         # Build the one and two body Hamiltonians
         one_body = OneBodyFermionicHamiltonian(h1_mo)
         two_body = TwoBodyFermionicHamiltonian(h2_mo)
-
-        # Recommended : Make sure that h1_mo is diagonal and that its eigenvalues are sorted in growing order.
-        #raise NotImplementedError()
 
         return cls(one_body, two_body)
 
