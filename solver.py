@@ -72,14 +72,9 @@ class ExactSolver(LCPSSolver):
             float, np.array : The lowest eigenvalue and the associated eigenvector.
         """
 
-        eig_value, eig_vector = None
+        eig_values, eig_vectors = np.linalg.eigh(observable.to_matrix())
 
-        ################################################################################################################
-        # YOUR CODE HERE (OPTIONAL)
-        # TO COMPLETE (after lecture on VQE)
-        ################################################################################################################
-
-        raise NotImplementedError()
+        eig_value, eig_vector = eig_values[0], eig_vectors[:, 0]
 
         self.last_opt_params = eig_vector  # store the state vector for retrieval
         return eig_value
