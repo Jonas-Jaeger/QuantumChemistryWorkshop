@@ -2,7 +2,7 @@
 estimator.py - To estimate expectation value of observables
 
 Copyright 2020-2023 Maxime Dion <maxime.dion@usherbrooke.ca>
-This file has been modified by <Your,Name> during the
+This file has been modified by **Jonas Jaeger** <jojaeger@cs.ubc.ca> during the
 QSciTech-QuantumBC virtual workshop on gate-based quantum computing.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,11 +91,20 @@ class Estimator:
 
         expectation_value = 0.
 
-        job = execute(circuits, backend=self.backend, **self.execute_opts)
-        results = job.result()
+        if isinstance(self.backend, Backend):
+            job = execute(circuits, backend=self.backend, **self.execute_opts)
+            results = job.result()
 
-        for diag_observable, counts in zip(self.diagonal_observables, results.get_counts()):
-            expectation_value += Estimator.estimate_diagonal_observable_expectation_value(diag_observable, counts)
+            for diag_observable, counts in zip(self.diagonal_observables, results.get_counts()):
+                expectation_value += Estimator.estimate_diagonal_observable_expectation_value(diag_observable, counts)
+        else:
+            from qiskit.quantum_info import SparsePauliOp
+            observables = [SparsePauliOp(str(diag_obs.pauli_strings[0])) for diag_obs in self.diagonal_observables]
+            results = self.backend.run(circuits=circuits, observables=observables, run_options=self.execute_opts).result()
+            for diag_observable, value in zip(self.diagonal_observables, results.values):
+                assert np.isreal(diag_observable.coefs[0])
+                expectation_value += np.real(diag_observable.coefs[0]) * value
+
 
         eval_time = time.time()-t0
         print("Eval time (s): ", eval_time)

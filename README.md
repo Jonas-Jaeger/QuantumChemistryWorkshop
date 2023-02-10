@@ -10,4 +10,4 @@ Description of the files :
 
 Other files :
 - Integrals_sto-3g_H2_d_0.7350_no_spin.npz : Contains the one body and two body integrals (no spin) for a H2 molecule with d=0.735. The two body is given in the physicist order.
-- activity_mppaing_.ipynb and activity_vqe_.ipynb : Tutorial Jupyter notebooks to help you code the concepts seen in the respective activities.
+- activity_mapping_.ipynb and activity_vqe_.ipynb : Tutorial Jupyter notebooks to help you code the concepts seen in the respective activities.

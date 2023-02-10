@@ -2,7 +2,7 @@
 solver.py - Solvers for LinearCombinaisonPauliString
 
 Copyright 2020-2021 Maxime Dion <maxime.dion@usherbrooke.ca>
-This file has been modified by <Your,Name> during the
+This file has been modified by **Jonas Jaeger** <jojaeger@cs.ubc.ca> during the
 QSciTech-QuantumBC virtual workshop on gate-based quantum computing.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +74,7 @@ class ExactSolver(LCPSSolver):
 
         eig_values, eig_vectors = np.linalg.eigh(observable.to_matrix())
 
-        eig_value, eig_vector = eig_values[0], eig_vectors[:, 0]
+        eig_value, eig_vector = min(eig_values), eig_vectors[:, 0]
 
         self.last_opt_params = eig_vector  # store the state vector for retrieval
         return eig_value
