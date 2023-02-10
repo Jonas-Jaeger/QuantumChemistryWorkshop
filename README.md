@@ -11,7 +11,20 @@ Additionally, for comparison, the exact solution for the ground state energy is 
 
 ### Results:
 
-![plot.pdf](plot.pdf)
+
+Three main results (see plot below)
+1. Simulated VQE matches exact solutions ●
+2. (Uncorrected) IBMQ overestimates ▼
+3. Error mitigation improves IBMQ results by mitigating the overestimation **x**
+
+![Plot showing experimental results](plot.png)
+
+### Poster:
+
+See my team's poster on the project here: 
+[Final poster.pdf](https://github.com/Jonas-Jaeger/QuantumChemistryWorkshop/files/10703407/Final.poster.pdf)
+
+Special thanks to my team members for the good collaboration!
 
 ### Disclaimer: 
 This implementation served the purpose to understand and learn the concepts involved in this Quantum Chemistry application for (Gate-based) IBM Quantum Computers. IBQ already provides complete implementations for VQE including molecule mappings to qubits in Qiskit. Please refer to <https://qiskit.org/textbook/ch-applications/vqe-molecules.html> and for details using the Qiskit Runtime <https://qiskit.org/documentation/partners/qiskit_ibm_runtime/tutorials/vqe_with_estimator.html> 
@@ -26,6 +39,9 @@ Description of the files (beyond the original template files as listed below):
 - plot.pdf: Plot showing the experimental results compared to the exact dissociation curve (PDF)
 - plot.png: Plot showing the experimental results compared to the exact dissociation curve (PNG)
 - plots.ipynb: Plots the experimental results
+
+### Acknowledgements:
+Me and my team sincerely thank CMC, QsiTech, QuantumBC for this informative workshop, and IBM for providing the quantum hardware.
 
 ## Original template description
 
